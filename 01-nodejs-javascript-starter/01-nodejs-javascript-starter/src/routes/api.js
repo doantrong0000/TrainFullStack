@@ -3,10 +3,9 @@ const { createUser } = require('../controllers/userController');
 
 const routerAPI = express.Router();
 
-
-routerAPI.get('/', (req, res) => {
-    return res.status(200).json("Hello World")
-})
+// routerAPI.get('/', (req, res) => {
+//     return res.status(200).json("Hello World")
+// })
 
 routerAPI.post("/register", createUser)
 
