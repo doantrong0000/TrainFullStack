@@ -8,11 +8,11 @@ const saltRounds = 10;
 const createUserService = async (name, email, password) => {
     try {
 
-const user = await User.findOne({ email });
-if (user) {
-    console.log(`>>> user exist ${email}`);
-    return null;
-}
+        const user = await User.findOne({ email });
+        if (user) {
+            console.log(`>>> user exist ${email}`);
+            return null;
+        }
 
         const hashPassword = await bcrypt.hash(password, saltRounds);
 
@@ -22,6 +22,9 @@ if (user) {
             password: hashPassword,
             role: "customer"
         })
+        if (result) {
+            console.log(">>> Tạo mới user thành công cho email:", email);
+        }
         return result;
     } catch (error) {
         console.log(error);
@@ -33,9 +36,9 @@ const loginService = async (email1, password) => {
     try {
         const user = await User.findOne({ email: email1 });
         if (user) {
-            console.log(">>> check user: ", user);
             const isMatchPassword = await bcrypt.compare(password, user.password);
             if (!isMatchPassword) {
+                console.log(">>> Đăng nhập thất bại: Sai mật khẩu cho email", email1);
                 return {
                     EC: 1,
                     EM: "Email/Password not valid!!"
@@ -62,6 +65,7 @@ const loginService = async (email1, password) => {
             }
         }
         else {
+            console.log(">>> Đăng nhập thất bại: Không tìm thấy email", email1);
             return {
                 EC: 1,
                 EM: "Email/Password not valid!!"
