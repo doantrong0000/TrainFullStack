@@ -1,4 +1,4 @@
-import { Table } from 'antd'; // Import Table từ antd
+import { notification, Table } from 'antd'; // Import Table từ antd
 import { useEffect, useState } from 'react';
 import { getUserApi } from '../utils/api';
 
@@ -8,12 +8,18 @@ const UserPage = () => {
     useEffect(() => {
         const fetchUser = async () => {
             const res = await getUserApi();
-            if (res) {
+            console.log("User API Response: ", res);
+            if (!res?.messsage) {
                 setDataSource(res)
+            } else {
+                notification.error({
+                    message: 'Unauthorized',
+                    description: res?.message,
+                });
             }
-            }
-             fetchUser();
-        
+        }
+        fetchUser();
+
     }, [])
 
 
@@ -41,9 +47,9 @@ const UserPage = () => {
     return (
         <div style={{ marginTop: 50, textAlign: 'center', fontSize: 30, fontWeight: 'bold' }}>
             <Table bordered
-             dataSource={dataSource} columns={columns}
-             rowKey='_id'
-             />
+                dataSource={dataSource} columns={columns}
+                rowKey='_id'
+            />
         </div>
     )
 }

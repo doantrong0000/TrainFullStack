@@ -12,14 +12,14 @@ const auth = (req, res, next) => {
             const token = req.headers.authorization.split(' ')[1];
 
             try {
-                  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            console.log(">>> check token:", decoded)
-            next();
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                console.log(">>> check token:", decoded)
+                next();
             } catch (error) {
                 message: "Token khong hop le"
             }
 
-          
+
         }
         else {
             return res.status(401).json({

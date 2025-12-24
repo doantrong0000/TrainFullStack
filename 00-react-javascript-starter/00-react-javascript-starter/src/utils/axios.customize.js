@@ -14,6 +14,8 @@ instance.interceptors.request.use(function (config) {
     return config;
   }, function (error) {
     // Do something with request error
+    console.log("Request error: ", error);
+    if (error?.response?.data) return error?.response?.data;  
     return Promise.reject(error);
   });
 
