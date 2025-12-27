@@ -13,10 +13,17 @@ const auth = (req, res, next) => {
 
             try {
                 const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                req.user = {
+                    email: decoded.email,
+                    name: decoded.name,
+                    createBy: "token"
+                }
                 console.log(">>> check token:", decoded)
                 next();
             } catch (error) {
-                message: "Token khong hop le"
+                return res.status(401).json({
+                    message: "Token không hợp lệ hoặc đã hết hạn"
+                })
             }
 
 

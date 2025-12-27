@@ -1,51 +1,60 @@
-import React, { useState } from 'react';
-import {  MailOutlined, SettingOutlined } from '@ant-design/icons';
+import React, { useContext, useState } from 'react';
+import { MailOutlined, SettingOutlined, AppstoreOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
-
+import { AuthContext } from '../auth.context.jsx';
 
 const Header = () => {
-
     const navigate = useNavigate();
+    const { auth } = useContext(AuthContext);
+
     const items = [
         {
-           label: <Link to={"/"}>Home</Link>,
+            label: <Link to={"/"}>Home</Link>,
             key: 'home',
-            icon: <MailOutlined />,
-        },  {
+            icon: <MailOutlined />, 
+        },
+        
+        // Logic: Nếu login rồi thì hiện User
+        ...(auth.isAuthenticated ? [{
             label: <Link to={"/user"}>User</Link>,
             key: 'user',
-            icon: <MailOutlined />,
-        },
+            icon: <AppstoreOutlined />, // Thay icon khác cho đẹp
+        }] : []),
+
         {
-            label: 'Welcome',
+            // Logic: Nếu chưa có email thì hiện "Guest"
+            label: `Welcome ${auth?.user?.email ?? "Guest"}`,
             key: 'SubMenu',
             icon: <SettingOutlined />,
             children: [
-                {
-                    label: <Link to={"/login"}>Login</Link>,
-                    key: 'login',
-                },
-                {
-                    label: <span onClick={() => {localStorage.clear("access_token");
-                        setCurrent('home');
-                        navigate("/")
+                // Logic: Đã login -> Hiện Logout
+                ...(auth.isAuthenticated ? [{
+                    label: <span onClick={() => {
+                        localStorage.removeItem("access_token");
+                        navigate("/"); 
+                        window.location.reload(); // Load lại trang để reset sạch sẽ
                     }}>Logout</span>,
                     key: 'logout',
-                },
-
-
-
+                }] : 
+                // Logic: Chưa login -> Hiện Login
+                [{
+                    label: <Link to={"/login"}>Login</Link>,
+                    key: 'login',
+                }]),
             ],
         },
     ];
 
-    const [current, setCurrent] = useState('mail');
+    // SỬA LỖI Ở ĐÂY: Đổi 'mail' thành 'home' để mặc định chọn trang chủ
+    const [current, setCurrent] = useState('home'); 
+
     const onClick = (e) => {
         console.log('click ', e);
         setCurrent(e.key);
     };
+
     return <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />;
 };
-export default Header;
 
+export default Header;
